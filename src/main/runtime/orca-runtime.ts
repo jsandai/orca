@@ -817,6 +817,7 @@ type RuntimeStore = {
   getGitHubCache: Store['getGitHubCache']
   getWorkspaceSession?: Store['getWorkspaceSession']
   setWorkspaceSession?: Store['setWorkspaceSession']
+  patchWorkspaceSession?: Store['patchWorkspaceSession']
   persistPtyBinding?: Store['persistPtyBinding']
   getUI?: Store['getUI']
   updateUI?: Store['updateUI']
@@ -3622,6 +3623,58 @@ export class OrcaRuntimeService {
         }
       })
       .filter((group) => group.tabOrder.length > 0)
+  }
+
+  /**
+   * Write a host-created terminal into the workspace session's
+   * `tabsByWorktree` so `exportRemoteWorkspaceSession` projects it to remote
+   * clients. Renderer-created terminals get this for free via the renderer's
+   * own session:patch; host/CLI/headless terminals have no renderer, so main
+   * must write the tab itself. Idempotent — skips when the tabId already
+   * exists (e.g. a renderer adopted it).
+   */
+  private recordHostTerminalInWorkspaceSession(
+    worktreeId: string,
+    args: {
+      tabId: string
+      ptyId: string
+      title: string | null
+      startupCwd?: string
+      launchAgent?: TuiAgent
+    }
+  ): void {
+    const store = this.store
+    if (!store?.getWorkspaceSession || !store.patchWorkspaceSession) {
+      return
+    }
+    try {
+      const session = store.getWorkspaceSession()
+      const existing = session?.tabsByWorktree?.[worktreeId] ?? []
+      if (existing.some((t) => t.id === args.tabId)) {
+        return
+      }
+      const tab: TerminalTab = {
+        id: args.tabId,
+        ptyId: args.ptyId,
+        worktreeId,
+        title: args.title ?? 'Terminal',
+        customTitle: args.title ?? null,
+        color: null,
+        sortOrder: existing.reduce((m, t) => Math.max(m, t.sortOrder), -1) + 1,
+        createdAt: Date.now(),
+        ...(args.startupCwd ? { startupCwd: args.startupCwd } : {}),
+        ...(args.launchAgent ? { launchAgent: args.launchAgent } : {})
+      }
+      store.patchWorkspaceSession({
+        tabsByWorktree: {
+          ...session.tabsByWorktree,
+          [worktreeId]: [...existing, tab]
+        }
+      })
+    } catch (err) {
+      // Best-effort — never let session persistence break a terminal spawn.
+      console.warn('[terminal-create] failed to record host terminal in workspace session:', err)
+    }
   }
 
   /**
@@ -17577,6 +17630,21 @@ export class OrcaRuntimeService {
           // metadata from an already-owned renderer pane; don't select it on mobile.
           selectIfNoActiveTab: presentation !== 'background',
           ...(cwd !== workspace.path ? { startupCwd: cwd } : {})
+        })
+      }
+      // Why: a host-created (CLI / sub-agent / headless) terminal has no
+      // renderer to write it into session.tabsByWorktree, so it never reaches
+      // exportRemoteWorkspaceSession and the remote client can't see it. Write
+      // the tab into the workspace session here so the remote projection picks
+      // it up. Idempotent — a renderer adoption writes the same tabId, and we
+      // skip when it's already present.
+      if (pty) {
+        this.recordHostTerminalInWorkspaceSession(workspace.id, {
+          tabId,
+          ptyId: result.id,
+          title: launchOpts.title ?? null,
+          ...(cwd !== workspace.path ? { startupCwd: cwd } : {}),
+          ...(launchOpts.launchAgent ? { launchAgent: launchOpts.launchAgent } : {})
         })
       }
       let surface: RuntimeTerminalCreate['surface'] = 'background'
