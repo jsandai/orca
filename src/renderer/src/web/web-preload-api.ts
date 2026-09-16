@@ -1330,13 +1330,18 @@ function createReposApi(): NonNullable<Partial<PreloadApi>['repos']> {
 function createWorktreesApi(): NonNullable<Partial<PreloadApi>['worktrees']> {
   return {
     list: async ({ repoId }) =>
-      (
-        await callRuntimeResult<{ worktrees: Worktree[] }>('worktree.list', {
-          repo: repoId,
-          limit: WEB_RUNTIME_WORKTREE_LIST_LIMIT
-        })
-      ).worktrees,
-    listDetected: async ({ repoId }) => callRuntimeDetectedWorktrees(repoId),
+      retagRuntimeWorktreesToThisHost(
+        (
+          await callRuntimeResult<{ worktrees: Worktree[] }>('worktree.list', {
+            repo: repoId,
+            limit: WEB_RUNTIME_WORKTREE_LIST_LIMIT
+          })
+        ).worktrees
+      ),
+    listDetected: async ({ repoId }) => {
+      const result = await callRuntimeDetectedWorktrees(repoId)
+      return { ...result, worktrees: retagRuntimeWorktreesToThisHost(result.worktrees) }
+    },
     listAll: () => listAllRuntimeWorktrees(),
     create: async (args) => {
       invalidateRuntimeWorktreeCaches()
@@ -3338,6 +3343,23 @@ function mergeSettings(
   }
 }
 
+// Why: the host serves worktrees stamped hostId:'local' — local *to the
+// host*. On this client that reads as locally-owned, so host-authoritative ops
+// (tab close, pane ops) resolve no runtime environment and silently fall back
+// to local-only (the "remote close doesn't kill the host terminal" bug).
+// Re-tag every served worktree to this client's runtime host so ownership
+// resolves to the paired environment.
+function retagRuntimeWorktreesToThisHost(worktrees: Worktree[]): Worktree[] {
+  const environment = requireActiveEnvironmentOrNull()
+  if (!environment) {
+    return worktrees
+  }
+  const runtimeHostId = toRuntimeExecutionHostId(environment.id)
+  return worktrees.map((worktree) =>
+    worktree.hostId === runtimeHostId ? worktree : { ...worktree, hostId: runtimeHostId }
+  )
+}
+
 async function listAllRuntimeWorktrees(): Promise<Worktree[]> {
   if (cachedWorktrees && Date.now() - cachedWorktrees.loadedAt < 5_000) {
     return cachedWorktrees.worktrees
@@ -3345,8 +3367,9 @@ async function listAllRuntimeWorktrees(): Promise<Worktree[]> {
   const result = await callRuntimeResult<{ worktrees: Worktree[] }>('worktree.list', {
     limit: WEB_RUNTIME_WORKTREE_LIST_LIMIT
   })
-  cachedWorktrees = { loadedAt: Date.now(), worktrees: result.worktrees }
-  return result.worktrees
+  const worktrees = retagRuntimeWorktreesToThisHost(result.worktrees)
+  cachedWorktrees = { loadedAt: Date.now(), worktrees }
+  return worktrees
 }
 
 async function listAllRuntimeDetectedWorktrees(): Promise<Worktree[]> {
@@ -3359,8 +3382,9 @@ async function listAllRuntimeDetectedWorktrees(): Promise<Worktree[]> {
     repos.map((repo) => callRuntimeDetectedWorktrees(repo.id))
   )
   const worktrees = detectedLists.flatMap((result) => result.worktrees)
-  cachedDetectedWorktrees = { loadedAt: Date.now(), worktrees }
-  return worktrees
+  const retagged = retagRuntimeWorktreesToThisHost(worktrees)
+  cachedDetectedWorktrees = { loadedAt: Date.now(), worktrees: retagged }
+  return retagged
 }
 
 async function callRuntimeDetectedWorktrees(repoId: string): Promise<DetectedWorktreeListResult> {
