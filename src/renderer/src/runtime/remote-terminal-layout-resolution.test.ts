@@ -83,4 +83,51 @@ describe('resolveTerminalLayoutRoot', () => {
     })
     expect(root).toBe(verticalSplit)
   })
+
+  it('keeps a superset prior tree when the incoming leaf set shrank transiently', () => {
+    // Why: a reconnect/resync can report a subset of the real panes (a surface
+    // drops out mid-update). The prior split tree contains every incoming leaf
+    // plus the momentarily-absent one — keep it instead of collapsing to a
+    // degenerate chain. This is the remote split-collapse fix.
+    const threeLeaf: TerminalPaneLayoutNode = {
+      type: 'split',
+      direction: 'horizontal',
+      first: verticalSplit, // a,b
+      second: { type: 'leaf', leafId: 'c' }
+    }
+    const onSynthesize = vi.fn()
+    const root = resolveTerminalLayoutRoot({
+      authoritativeRoot: undefined, // no usable host tree this sync
+      existingRoot: threeLeaf,
+      leafIds: ['a', 'b'], // 'c' transiently absent
+      onSynthesize
+    })
+    expect(root).toBe(threeLeaf)
+    expect(onSynthesize).not.toHaveBeenCalled()
+  })
+
+  it('still synthesizes when the prior tree does not contain an incoming leaf', () => {
+    // A genuinely new leaf (not just a transiently-absent one) can't be placed
+    // without a direction — degenerate is the honest fallback.
+    const onSynthesize = vi.fn()
+    const root = resolveTerminalLayoutRoot({
+      existingRoot: verticalSplit, // a,b
+      leafIds: ['a', 'b', 'c'], // 'c' is new
+      onSynthesize
+    })
+    expect(onSynthesize).toHaveBeenCalledWith(3)
+    expect(root?.type).toBe('split')
+  })
+
+  it('still synthesizes when the prior tree is a strict subset (leaf removed for real)', () => {
+    // If the incoming set has a leaf the prior tree never had AND the prior
+    // tree has none extra, there's nothing richer to keep.
+    const onSynthesize = vi.fn()
+    resolveTerminalLayoutRoot({
+      existingRoot: { type: 'leaf', leafId: 'a' },
+      leafIds: ['a', 'b'],
+      onSynthesize
+    })
+    expect(onSynthesize).toHaveBeenCalledWith(2)
+  })
 })

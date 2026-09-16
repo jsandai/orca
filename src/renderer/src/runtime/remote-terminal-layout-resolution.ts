@@ -76,11 +76,26 @@ function synthesizeDegenerateLayout(
   )
 }
 
+/** Whether `root` covers every id in `leafIds` — extras in the tree are OK. */
+function layoutContainsLeaves(
+  root: TerminalPaneLayoutNode | null | undefined,
+  leafIds: readonly string[]
+): boolean {
+  if (!root) {
+    return false
+  }
+  const treeLeafIds = collectLayoutLeafIds(root)
+  return leafIds.every((leafId) => treeLeafIds.has(leafId))
+}
+
 /**
  * Resolve the layout tree for `leafIds`, preferring authoritative/known trees
  * (which carry the real direction) over any synthesized fallback.
  *
- * Precedence: host-authoritative layout → prior client layout → degenerate.
+ * Precedence: host-authoritative layout → prior client layout → a prior tree
+ * that is a strict superset of the incoming leaves (a transient resync can
+ * transiently drop leaves; keep the richer tree rather than collapsing to a
+ * degenerate chain) → degenerate.
  */
 export function resolveTerminalLayoutRoot(args: {
   authoritativeRoot?: TerminalPaneLayoutNode | null
@@ -93,6 +108,18 @@ export function resolveTerminalLayoutRoot(args: {
   }
   if (layoutCoversLeaves(args.existingRoot, args.leafIds)) {
     return args.existingRoot ?? null
+  }
+  // Why: during a reconnect/resync the snapshot can transiently report a subset
+  // of the real panes (a surface drops out mid-update). If the prior client
+  // tree still contains every incoming leaf — i.e. it's a superset — keep it
+  // instead of synthesizing a degenerate chain that collapses the split. The
+  // extra leaves re-land on the next full snapshot.
+  if (
+    args.existingRoot &&
+    layoutContainsLeaves(args.existingRoot, args.leafIds) &&
+    collectLayoutLeafIds(args.existingRoot).size > args.leafIds.length
+  ) {
+    return args.existingRoot
   }
   return synthesizeDegenerateLayout(args.leafIds, args.onSynthesize)
 }
