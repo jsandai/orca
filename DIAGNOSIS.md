@@ -132,3 +132,54 @@ client reaches. So:
 **If the remote can't connect at all:** the dev build may have taken a fallback
 port if 6768 was still held. Check `~/.config/orca-dev/orca-runtime.json` for
 the actual `websocket` endpoint and point the remote at that port.
+
+---
+
+## Follow-up: remote split layout collapses intermittently (separate bug)
+
+**Symptom (verified on Windows remote, 2026-09-16):** a host-created split
+layout renders on the paired remote, then reverts to a single terminal pane.
+Re-activating the worktree restores the split.
+
+**Host side is correct + stable.** `session.tabs.list` on the serve shows the
+split `parentLayout.root` persisting across ~60s of polling with no collapse —
+the host publishes a stable multi-leaf tree. So the gap is in the remote
+*client's* reconcile, not the export.
+
+**Where to look:** `src/renderer/src/runtime/web-session-tabs-sync.ts` →
+`chooseRemoteTerminalLayout` → `resolveTerminalLayoutRoot`
+(`remote-terminal-layout-resolution.ts`). Precedence is host-authoritative
+`parentLayout.root` → prior client root → degenerate synthesize. The collapse
+means at some sync the authoritative root stopped covering `leafIds` (a
+transient mismatch — e.g. a new leaf published before its layout caught up, or
+a leaf-set computed differently mid-stream) and the client stored a degenerate
+single-leaf root as `existingRoot`, which then kept winning until the tab was
+re-created on re-activation.
+
+**Not the same as the export fix** — `bb64fbc` (record host terminals in
+`tabsByWorktree`) is verified and independent. This is a client reconcile bug.
+
+### Refined mechanism (client reconcile)
+
+`buildMirroredTerminalTabs` → `chooseRemoteTerminalLayout` → `resolveTerminalLayoutRoot`.
+
+- `leafIds` = every terminal surface's `leafId` in the snapshot.
+- `authoritativeRoot` = `surfaces.find(s => s.parentLayout)?.parentLayout.root`
+  — the FIRST surface carrying a layout, assumed uniform across siblings
+  (verified: siblings do carry identical roots in steady state).
+- Precedence: authoritative → prior `existingRoot` → degenerate synthesize.
+
+Collapse happens when `layoutCoversLeaves(authoritativeRoot, leafIds)` fails —
+i.e. the picked root's leaf set ≠ the surfaces' leaf set. That occurs in the
+spawn/exit window: a surface lands in `surfaces` before its `parentLayout`
+reflects the new leaf (or a leaf drops out mid-update). The degenerate root is
+then written into `terminalLayoutsByTabId[tabId]` and, once stored as
+`existingRoot`, can shadow a recovering authoritative root on later syncs until
+the tab is re-created (re-activation).
+
+**Candidate fix:** in `chooseRemoteTerminalLayout`, pick the `parentLayout`
+whose root covers the most of `leafIds` (or exactly all of them) rather than
+the first surface with any layout; and/or in `resolveTerminalLayoutRoot`,
+prefer an authoritative root that is a strict superset over a stored
+`existingRoot`, so a transient degenerate root can't stick. Needs a real remote
+client's snapshot log to confirm the exact transient before patching.
