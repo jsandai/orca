@@ -103,8 +103,32 @@ terminal-instantiation path (does it lazily create a PTY view for each
 
 ## Suggested verification once you're at the remote
 
-1. Build/run the patched host (`pnpm dev`), connect the remote client.
-2. `orca terminal create` on the host → check the remote's workspace snapshot
-   now contains the tab (`tabsByWorktreePath[<path>]` has a new entry).
-3. If the tab is in the snapshot but nothing renders → the gap is remote-side
-   PTY instantiation, not export. If it renders → done.
+**Profile already copied** to `~/.config/orca-dev` (8.8MB — settings,
+workspaces, and the pairing credentials `orca-devices.json` +
+`orca-e2ee-keypair.json`, perms preserved). You do NOT need to re-pair the
+remote — the device token + E2EE keypair came across as a matched set.
+
+**One thing to handle: the websocket port.** The remote client connects to
+`ws://<host>:6768` (default, with a persisted fallback). Both the installed
+Orca and the dev build want that port, and `orca-runtime.json` (the runtime
+pointer) is rewritten per launch — whichever binds 6768 is what your remote
+client reaches. So:
+
+1. **Quit the installed Orca** (or it holds 6768 and the remote hits the
+   unpatched app).
+2. Run the patched build: `cd /home/dev/orca-src && pnpm start`
+   (uses `~/.config/orca-dev`, serves the remote on 6768).
+3. On the host, `orca terminal create` (or spawn a pi subagent).
+4. On the remote, check whether the terminal appears.
+
+**Reading the result:**
+- Terminal renders on remote → done, the export gap was the whole bug.
+- Terminal is in the remote's `tabsByWorktreePath` snapshot but doesn't render
+  → the remaining gap is remote-side PTY instantiation (does the remote lazily
+  create a PTY view for a host `ptyId`, or only for terminals it created
+  itself). That's a separate trace — point me at the remote's
+  terminal-instantiation code.
+
+**If the remote can't connect at all:** the dev build may have taken a fallback
+port if 6768 was still held. Check `~/.config/orca-dev/orca-runtime.json` for
+the actual `websocket` endpoint and point the remote at that port.
