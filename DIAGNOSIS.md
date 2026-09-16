@@ -183,3 +183,38 @@ the first surface with any layout; and/or in `resolveTerminalLayoutRoot`,
 prefer an authoritative root that is a strict superset over a stored
 `existingRoot`, so a transient degenerate root can't stick. Needs a real remote
 client's snapshot log to confirm the exact transient before patching.
+
+### Confirmed on a live Windows remote (DevTools console, 2026-09-16)
+
+Reproduced the collapse with DevTools open on the paired remote. Console shows:
+
+- `[web-session-tabs-sync] synthesized layout for 2 leaves; no authoritative or
+  prior tree covered them` — the degenerate fallback firing = the collapse.
+- A cascade of `[web-runtime-session] failed to update pane layout:
+  tab_not_found` / `failed to activate tab: tab_not_found` — the remote tries to
+  update mirrored tabs that aren't in its local store.
+- `[terminal-lifecycle] fresh spawn left the pane unbound` — a pane spawned but
+  never bound to a leaf.
+- `[remote-runtime-pty] host session recovery request failed during reconnect:
+  Timed out` and `Could not connect to the remote Orca runtime` — the remote's
+  websocket to the host is dropping and re-syncing.
+
+**Refined root cause:** the collapse is a reconnect-resync problem, not pure
+layout logic. When the remote's ws to the host drops and reconnects, the resync
+rebuilds mirrored tabs from a partial/inconsistent snapshot — `tab_not_found`
+errors show the local store lost tabs mid-resync, and `chooseRemoteTerminalLayout`
+falls back to a synthesized degenerate root because neither the authoritative
+nor prior tree covers the transient leaf set. The split collapses and stays
+collapsed until the user re-activates the worktree (which rebuilds the tab).
+
+Two separable defects:
+1. ws instability between remote and host (network or serve-side — host logs
+   show no disconnects, so likely client-side/network).
+2. resync is not layout-preserving — a partial snapshot during reconnect
+   collapses a multi-pane split into a degenerate single-leaf layout instead of
+   retaining the last good authoritative root until the full state rehydrates.
+
+**Fix direction for (2):** `resolveTerminalLayoutRoot` should not let a
+synthesized degenerate root overwrite a previously-good `existingRoot` during a
+reconnect resync — prefer retaining the last authoritative root whose leaf set
+is a superset, and only synthesize when no prior root ever existed.
