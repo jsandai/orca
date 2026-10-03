@@ -214,6 +214,41 @@ describe('detectLanguage', () => {
     expect(detectLanguage(filePath)).toBe(expected)
   })
 
+  describe('shebang fallback', () => {
+    it('detects a direct interpreter path', () => {
+      expect(detectLanguage('bin/omarchy-agent-usage-pi', '#!/usr/bin/python3\n')).toBe('python')
+    })
+
+    it('detects the /usr/bin/env form', () => {
+      expect(detectLanguage('bin/script', '#!/usr/bin/env bash\necho hi')).toBe('shell')
+    })
+
+    it('skips env options and assignments', () => {
+      expect(detectLanguage('bin/script', '#!/usr/bin/env -S FOO=1 node --flag')).toBe('javascript')
+    })
+
+    it('strips version suffixes', () => {
+      expect(detectLanguage('bin/tool', '#!/usr/bin/env python3.12')).toBe('python')
+    })
+
+    it('handles CRLF line endings', () => {
+      expect(detectLanguage('bin/tool', '#!/usr/bin/ruby\r\nputs 1')).toBe('ruby')
+    })
+
+    it('returns plaintext for unknown interpreters', () => {
+      expect(detectLanguage('bin/tool', '#!/usr/bin/env awk')).toBe('plaintext')
+    })
+
+    it('returns plaintext when there is no shebang', () => {
+      expect(detectLanguage('bin/tool', 'echo hi\n')).toBe('plaintext')
+      expect(detectLanguage('bin/tool')).toBe('plaintext')
+    })
+
+    it('never overrides a name-based match', () => {
+      expect(detectLanguage('script.rb', '#!/usr/bin/env python3')).toBe('ruby')
+    })
+  })
+
   it.each([
     ['/Users/me/.ZSHRC', 'shell'],
     ['C:\\Users\\me\\.BASHRC', 'shell'],
