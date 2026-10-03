@@ -15,7 +15,7 @@ export function WorkspaceChromeAppearanceSetting({
 }: WorkspaceChromeAppearanceSettingProps): React.JSX.Element {
   const title = translate(
     'auto.components.settings.AppearancePane.workspaceChromeAppearance.title',
-    'Title & Status Bar Appearance'
+    'Interface Appearance'
   )
   return (
     <SettingsRow
@@ -23,7 +23,7 @@ export function WorkspaceChromeAppearanceSetting({
       label={title}
       description={translate(
         'auto.components.settings.AppearancePane.workspaceChromeAppearance.rowDescription',
-        'Make the title bar, tab strip, and status bar match your terminal, or keep the app theme.'
+        'Make the whole Orca interface match your terminal theme, or keep the app theme.'
       )}
       control={
         <SettingsSegmentedControl<WorkspaceChromeAppearanceMode>

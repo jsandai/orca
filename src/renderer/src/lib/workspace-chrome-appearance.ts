@@ -1,4 +1,5 @@
 import type { GlobalSettings } from '../../../shared/global-settings-types'
+import { isTerminalBackgroundLight } from './terminal-title-contrast'
 import {
   resolveTerminalSurfaceVariables,
   type LeftSidebarStyleVariables,
@@ -23,5 +24,31 @@ export function resolveWorkspaceChromeStyleVariables(
     // Why: these bars paint --bg-titlebar, and tabs paint --card; the 4% card lift would read as a separate strip.
     '--bg-titlebar': background,
     '--card': background
+  }
+}
+
+/** Root variables and light/dark mode that bring the whole app onto the terminal theme. */
+export function resolveWorkspaceChromeDocumentAppearance(
+  settings: WorkspaceChromeAppearanceSettings | null | undefined,
+  systemPrefersDark: boolean
+): { variables: LeftSidebarStyleVariables; theme: 'dark' | 'light' } | undefined {
+  if (settings?.workspaceChromeAppearanceMode !== 'match-terminal') {
+    return undefined
+  }
+  // Why: terminal opacity would make every menu and dialog see-through, so the app uses the solid color.
+  const vars = resolveTerminalSurfaceVariables(
+    { ...settings, terminalBackgroundOpacity: undefined },
+    systemPrefersDark
+  )
+  return {
+    variables: {
+      ...vars,
+      '--bg-titlebar': vars['--background'],
+      // Why: popovers keep the card lift so they stay distinct from the surface behind them.
+      '--popover': vars['--card'],
+      '--popover-foreground': vars['--foreground']
+    },
+    // Why: status, badge, and diff colors are tuned per mode; pick the one that suits the terminal background.
+    theme: isTerminalBackgroundLight(vars['--background']) ? 'light' : 'dark'
   }
 }

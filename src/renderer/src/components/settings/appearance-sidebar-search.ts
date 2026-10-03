@@ -37,11 +37,11 @@ export const getWorkspaceChromeAppearanceEntry = createLocalizedCatalog(
   (): SettingsSearchEntry => ({
     title: translate(
       'auto.components.settings.appearance.search.workspaceChromeAppearance.title',
-      'Title & Status Bar Appearance'
+      'Interface Appearance'
     ),
     description: translate(
       'auto.components.settings.appearance.search.workspaceChromeAppearance.description',
-      'Make the title bar, tab strip, and status bar match your terminal, or keep the app theme.'
+      'Make the whole Orca interface match your terminal theme, or keep the app theme.'
     ),
     keywords: [
       ...translateSearchKeyword(

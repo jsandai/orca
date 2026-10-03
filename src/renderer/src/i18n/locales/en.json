@@ -7048,8 +7048,8 @@
             "tintOpacityDescription": "Controls how strongly the tint is mixed into the sidebar."
           },
           "workspaceChromeAppearance": {
-            "title": "Title & Status Bar Appearance",
-            "rowDescription": "Make the title bar, tab strip, and status bar match your terminal, or keep the app theme.",
+            "title": "Interface Appearance",
+            "rowDescription": "Make the whole Orca interface match your terminal theme, or keep the app theme.",
             "default": "Default",
             "matchTerminal": "Match Terminal"
           },
@@ -9573,8 +9573,8 @@
               "tint": "tint"
             },
             "workspaceChromeAppearance": {
-              "title": "Title & Status Bar Appearance",
-              "description": "Make the title bar, tab strip, and status bar match your terminal, or keep the app theme.",
+              "title": "Interface Appearance",
+              "description": "Make the whole Orca interface match your terminal theme, or keep the app theme.",
               "tabBar": "tab bar",
               "statusBar": "status bar"
             },

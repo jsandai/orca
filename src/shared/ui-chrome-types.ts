@@ -14,7 +14,7 @@ export type SourceControlGroupOrder = 'changes-first' | 'staged-first' | 'untrac
 
 export type LeftSidebarAppearanceMode = 'default' | 'match-terminal' | 'tinted'
 
-/** Surface for the title bar, tab strip, and status bar: app theme, or the active terminal theme. */
+/** Whole-app surfaces and light/dark mode: app theme, or the active terminal theme. */
 export type WorkspaceChromeAppearanceMode = 'default' | 'match-terminal'
 
 /** Global settings for the app chrome around the terminal. */

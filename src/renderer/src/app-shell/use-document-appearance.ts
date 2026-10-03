@@ -1,12 +1,14 @@
 import { useEffect } from 'react'
 import { buildAppFontFamily } from '@/lib/app-font-family'
+import { useWorkspaceChromeDocumentAppearance } from '@/lib/use-workspace-chrome-style'
 import { applyDocumentTheme } from '../lib/document-theme'
 import { scheduleRuntimeGraphSync } from '../runtime/sync-runtime-graph'
 import { useAppStore } from '../store'
 
 /** Applies the settings-driven theme and app font to the document root. */
 export function useDocumentAppearance(): void {
-  const theme = useAppStore((s) => s.settings?.theme)
+  const appTheme = useAppStore((s) => s.settings?.theme)
+  const theme = useWorkspaceChromeDocumentAppearance() ?? appTheme
   const appFontFamily = useAppStore((s) => s.settings?.appFontFamily)
 
   useEffect(() => {

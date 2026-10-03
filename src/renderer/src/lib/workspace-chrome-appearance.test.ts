@@ -1,7 +1,10 @@
 import { tmpdir } from 'node:os'
 import { describe, expect, it } from 'vitest'
 import { getDefaultSettings } from '../../../shared/constants'
-import { resolveWorkspaceChromeStyleVariables } from './workspace-chrome-appearance'
+import {
+  resolveWorkspaceChromeDocumentAppearance,
+  resolveWorkspaceChromeStyleVariables
+} from './workspace-chrome-appearance'
 
 function settings(overrides = {}) {
   return {
@@ -40,5 +43,40 @@ describe('resolveWorkspaceChromeStyleVariables', () => {
         true
       )
     ).toBeUndefined()
+  })
+})
+
+describe('resolveWorkspaceChromeDocumentAppearance', () => {
+  it('leaves the document alone by default', () => {
+    expect(resolveWorkspaceChromeDocumentAppearance(settings(), true)).toBeUndefined()
+  })
+
+  it('uses the solid terminal color so menus are not see-through', () => {
+    const appearance = resolveWorkspaceChromeDocumentAppearance(
+      settings({
+        workspaceChromeAppearanceMode: 'match-terminal',
+        terminalColorOverrides: { background: '#000000', foreground: '#ff7edb' },
+        terminalBackgroundOpacity: 0.5
+      }),
+      true
+    )
+
+    expect(appearance?.variables['--background']).toBe('#000000')
+    expect(appearance?.variables['--popover']).toBe(appearance?.variables['--card'])
+    expect(appearance?.variables['--popover']).toContain('#ff7edb 4%')
+    expect(appearance?.theme).toBe('dark')
+  })
+
+  it('switches the app to light mode for a light terminal background', () => {
+    const appearance = resolveWorkspaceChromeDocumentAppearance(
+      settings({
+        theme: 'dark',
+        workspaceChromeAppearanceMode: 'match-terminal',
+        terminalColorOverrides: { background: '#fffcf0', foreground: '#100f0f' }
+      }),
+      true
+    )
+
+    expect(appearance?.theme).toBe('light')
   })
 })
