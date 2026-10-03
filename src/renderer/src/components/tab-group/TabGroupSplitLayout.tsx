@@ -1,6 +1,21 @@
 import type { TabGroupLayoutNode } from '../../../../shared/tab-types'
 import { TabGroupSplitNodeTree } from './TabGroupSplitNodeTree'
 import { WorkspaceTabDragLayer } from './WorkspaceTabDragLayer'
+import { useWorkspaceChromeStyle } from '@/lib/use-workspace-chrome-style'
+
+/** Why a component (not a hook in TabGroupSplitLayout): the split-layout tests call
+ *  TabGroupSplitLayout(props) as a plain function to inspect the element tree, which
+ *  forbids hooks at this level. The 4px drag strip is the only piece that needs the
+ *  workspace-chrome variables, so it owns the hook. */
+function WorkspaceChromeDragStrip(): React.JSX.Element {
+  return (
+    <div
+      className="h-[4px] shrink-0 bg-card"
+      style={useWorkspaceChromeStyle()}
+      data-terminal-focus-release-surface="true"
+    />
+  )
+}
 
 /** The main workspace surface: the shared drag scope and group tree under main-window chrome
  *  (drag strip, left seam border). Hosts with their own chrome compose the two parts directly. */
@@ -38,7 +53,7 @@ export default function TabGroupSplitLayout({
           ref={setDragRootNode}
           className="flex flex-col flex-1 min-w-0 min-h-0 overflow-hidden border-l border-border"
         >
-          <div className="h-[4px] shrink-0 bg-card" data-terminal-focus-release-surface="true" />
+          <WorkspaceChromeDragStrip />
           <div className="flex flex-1 min-w-0 min-h-0 overflow-hidden">
             <TabGroupSplitNodeTree
               layout={layout}

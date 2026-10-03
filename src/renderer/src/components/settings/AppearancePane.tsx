@@ -37,7 +37,8 @@ import { SHOW_UI_LANGUAGE_SETTING } from '@/i18n/supported-languages'
 import { translate } from '@/i18n/i18n'
 import {
   getLeftSidebarAppearanceEntry,
-  getWorkspaceCardLayoutEntry
+  getWorkspaceCardLayoutEntry,
+  getWorkspaceChromeAppearanceEntry
 } from './appearance-sidebar-search'
 import { resolveInterfaceSectionSummary } from './appearance-interface-summary'
 export { getAppearancePaneSearchEntries }
@@ -160,6 +161,7 @@ export function AppearancePane({
     ...getSidebarEntries(),
     ...getLayoutEntries(),
     getLeftSidebarAppearanceEntry(),
+    getWorkspaceChromeAppearanceEntry(),
     getWorkspaceCardLayoutEntry()
   ]
 

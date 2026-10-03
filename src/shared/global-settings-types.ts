@@ -33,7 +33,7 @@ import type {
   AgentDashboardMode,
   BranchPrefixStrategy,
   FloatingTerminalTriggerLocation,
-  LeftSidebarAppearanceMode,
+  ChromeAppearanceSettings,
   OpenInApplication,
   SourceControlGroupOrder,
   SourceControlViewMode,
@@ -47,7 +47,7 @@ export type { WorktreeVisibilityDefaults } from './repo-types'
 /** MiniMax account region used to select the quota endpoint. */
 export type MiniMaxEndpoint = 'overseas' | 'cn'
 
-export type GlobalSettings = NativeChatGlobalSettings & {
+export type GlobalSettings = NativeChatGlobalSettings & ChromeAppearanceSettings & {
   workspaceDir: string
   /** Host-owned defaults used when a repository has no explicit visibility override. */
   worktreeVisibilityDefaults?: WorktreeVisibilityDefaults
@@ -70,10 +70,6 @@ export type GlobalSettings = NativeChatGlobalSettings & {
   branchPrefix: BranchPrefixStrategy
   branchPrefixCustom: string
   theme: 'system' | 'dark' | 'light'
-  /** Controls the left sidebar surface without changing terminal brightness. */
-  leftSidebarAppearanceMode: LeftSidebarAppearanceMode
-  leftSidebarTintColor?: string
-  leftSidebarTintOpacity?: number
   uiLanguage: UiLanguage
   appIcon: AppIconId
   appFontFamily: string

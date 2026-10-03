@@ -14,6 +14,18 @@ export type SourceControlGroupOrder = 'changes-first' | 'staged-first' | 'untrac
 
 export type LeftSidebarAppearanceMode = 'default' | 'match-terminal' | 'tinted'
 
+/** Surface for the title bar, tab strip, and status bar: app theme, or the active terminal theme. */
+export type WorkspaceChromeAppearanceMode = 'default' | 'match-terminal'
+
+/** Global settings for the app chrome around the terminal. */
+export type ChromeAppearanceSettings = {
+  /** Controls the left sidebar surface without changing terminal brightness. */
+  leftSidebarAppearanceMode: LeftSidebarAppearanceMode
+  leftSidebarTintColor?: string
+  leftSidebarTintOpacity?: number
+  workspaceChromeAppearanceMode?: WorkspaceChromeAppearanceMode
+}
+
 /** Strategy for the prefix prepended to worktree branch names. */
 export type BranchPrefixStrategy = 'git-username' | 'custom' | 'none'
 

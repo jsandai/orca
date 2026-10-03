@@ -6,11 +6,8 @@ import {
 } from '../../../shared/left-sidebar-appearance'
 import { resolveEffectiveTerminalAppearance } from './terminal-theme'
 
-type LeftSidebarAppearanceSettings = Pick<
+export type TerminalSurfaceSettings = Pick<
   GlobalSettings,
-  | 'leftSidebarAppearanceMode'
-  | 'leftSidebarTintColor'
-  | 'leftSidebarTintOpacity'
   | 'theme'
   | 'terminalThemeDark'
   | 'terminalDividerColorDark'
@@ -21,6 +18,12 @@ type LeftSidebarAppearanceSettings = Pick<
   | 'terminalColorOverrides'
   | 'terminalBackgroundOpacity'
 >
+
+type LeftSidebarAppearanceSettings = TerminalSurfaceSettings &
+  Pick<
+    GlobalSettings,
+    'leftSidebarAppearanceMode' | 'leftSidebarTintColor' | 'leftSidebarTintOpacity'
+  >
 
 export type LeftSidebarStyleVariables = Record<string, string>
 
@@ -89,8 +92,9 @@ function buildSurfaceVariables(args: {
   return vars
 }
 
-function resolveTerminalSurfaceVariables(
-  settings: LeftSidebarAppearanceSettings,
+/** Surface and text tokens that make a scoped subtree paint with the active terminal theme. */
+export function resolveTerminalSurfaceVariables(
+  settings: TerminalSurfaceSettings,
   systemPrefersDark: boolean
 ): LeftSidebarStyleVariables {
   const appearance = resolveEffectiveTerminalAppearance(settings, systemPrefersDark)

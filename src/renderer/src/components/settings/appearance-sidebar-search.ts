@@ -33,6 +33,37 @@ export const getLeftSidebarAppearanceEntry = createLocalizedCatalog((): Settings
   ]
 }))
 
+export const getWorkspaceChromeAppearanceEntry = createLocalizedCatalog(
+  (): SettingsSearchEntry => ({
+    title: translate(
+      'auto.components.settings.appearance.search.workspaceChromeAppearance.title',
+      'Title & Status Bar Appearance'
+    ),
+    description: translate(
+      'auto.components.settings.appearance.search.workspaceChromeAppearance.description',
+      'Make the title bar, tab strip, and status bar match your terminal, or keep the app theme.'
+    ),
+    keywords: [
+      ...translateSearchKeyword(
+        'auto.components.settings.appearance.search.workspaceChromeAppearance.tabBar',
+        'tab bar'
+      ),
+      ...translateSearchKeyword(
+        'auto.components.settings.appearance.search.workspaceChromeAppearance.statusBar',
+        'status bar'
+      ),
+      ...translateSearchKeyword(
+        'auto.components.settings.appearance.search.leftSidebarAppearance.terminal',
+        'terminal'
+      ),
+      ...translateSearchKeyword(
+        'auto.components.settings.appearance.search.leftSidebarAppearance.background',
+        'background'
+      )
+    ]
+  })
+)
+
 export const getWorkspaceCardLayoutEntry = createLocalizedCatalog((): SettingsSearchEntry => ({
   title: translate(
     'auto.components.settings.appearance.search.workspaceCardLayout.title',

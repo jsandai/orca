@@ -24,6 +24,7 @@ import {
   selectAppRootSurfaceVoiceEnabled
 } from './app-root-surface-settings'
 import type { FloatingWorkspacePanelState } from './use-floating-workspace-panel'
+import { useWorkspaceChromeStyle } from '@/lib/use-workspace-chrome-style'
 import type { OnboardingGate } from './use-onboarding-and-feature-tips'
 
 const QuickOpen = lazy(() => import('../components/QuickOpen'))
@@ -140,6 +141,7 @@ export function AppRootSurfaces(props: {
   const petEnabled = useAppStore(selectAppRootSurfacePetEnabled)
   const telemetryOptedIn = useAppStore(selectAppRootSurfaceTelemetryOptedIn)
   const statusBarVisible = useAppStore((s) => s.statusBarVisible)
+  const workspaceChromeStyle = useWorkspaceChromeStyle()
   const persistedUIReady = useAppStore((s) => s.persistedUIReady)
   const petVisible = useAppStore((s) => s.petVisible)
   const dictationState = useAppStore((s) => s.dictationState)
@@ -176,7 +178,10 @@ export function AppRootSurfaces(props: {
       {statusBarVisible ? (
         <Suspense
           fallback={
-            <div className="h-6 min-h-[24px] shrink-0 border-t border-border bg-[var(--bg-titlebar,var(--card))]" />
+            <div
+              className="h-6 min-h-[24px] shrink-0 border-t border-border bg-[var(--bg-titlebar,var(--card))]"
+              style={workspaceChromeStyle}
+            />
           }
         >
           <OverlayBoundary

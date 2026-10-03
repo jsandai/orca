@@ -3,6 +3,7 @@ import { useShallow } from 'zustand/react/shallow'
 import { SYNC_FIT_PANES_EVENT } from '@/constants/terminal'
 import { canShowRightSidebarForView } from '@/lib/right-sidebar-visibility'
 import { resolveLeftSidebarStyleVariables } from '@/lib/left-sidebar-appearance'
+import { resolveWorkspaceChromeStyleVariables } from '@/lib/workspace-chrome-appearance'
 import { resolveLeftTitlebarChromeLayout } from '@/lib/titlebar-left-chrome'
 import { shouldShowWorktreeCreationSurface } from '@/lib/worktree-creation-surface'
 import { useAppStore } from '../store'
@@ -53,6 +54,10 @@ export function useAppChromeLayout() {
     () => resolveLeftSidebarStyleVariables(settings, systemPrefersDark),
     [settings, systemPrefersDark]
   ) as React.CSSProperties | undefined
+  const workspaceChromeStyle: React.CSSProperties | undefined = useMemo(
+    () => resolveWorkspaceChromeStyleVariables(settings, systemPrefersDark),
+    [settings, systemPrefersDark]
+  )
 
   // Why floating tabs count: the workbench owns every tab's unsaved-close and quit protection, and
   // floating tabs exist without an active worktree.
@@ -135,6 +140,7 @@ export function useAppChromeLayout() {
     isFullScreen,
     leftSidebarStyle,
     leftTitlebarChromeLayout,
+    workspaceChromeStyle,
     rightSidebarExplorerView,
     rightSidebarOpen,
     rightSidebarTab,

@@ -117,7 +117,7 @@ export function AppWorkspaceShell(props: {
         <div className="flex flex-col flex-1 min-w-0 min-h-0">
           {/* Why: workspace view drops the full-width titlebar so tab groups extend to the top; settings/landing/tasks keep it. */}
           {!layout.leftTitlebarChromeLayout.shouldMount ? (
-            <div className="titlebar">
+            <div className="titlebar" style={layout.workspaceChromeStyle}>
               <div className="flex items-center shrink-0 mr-2">{titlebarLeftControls}</div>
               {titlebarMainStrip}
             </div>
@@ -138,7 +138,9 @@ export function AppWorkspaceShell(props: {
                     }`}
                     style={{
                       // Why: custom sidebar appearances are scoped to the sidebar root; mirror those vars onto the header in the same left-column panel.
-                      ...(layout.sidebarOpen ? layout.leftSidebarStyle : undefined),
+                      ...(layout.sidebarOpen
+                        ? layout.leftSidebarStyle
+                        : layout.workspaceChromeStyle),
                       // Why: size from the wrapper's live width so the header tracks in-flight drag resizes (persisted to Zustand only on mouseup).
                       width: layout.sidebarOpen ? '100%' : undefined
                     }}
@@ -159,7 +161,9 @@ export function AppWorkspaceShell(props: {
               {layout.stackedSidebarOpen &&
               layout.activeView !== 'automations' &&
               layout.activeView !== 'artifacts' ? (
-                <div className="titlebar">{titlebarMainStrip}</div>
+                <div className="titlebar" style={layout.workspaceChromeStyle}>
+                  {titlebarMainStrip}
+                </div>
               ) : null}
               <div className="relative flex flex-1 min-w-0 min-h-0 overflow-hidden">
                 {/* Why: match the RightSidebar header's 36px/top-0 so the toggle's vertical center is identical open vs closed — else the icon jitters. */}

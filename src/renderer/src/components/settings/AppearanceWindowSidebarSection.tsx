@@ -22,8 +22,10 @@ import {
 } from './appearance-search'
 import { USAGE_PERCENTAGE_DISPLAY_SETTING_ID } from './appearance-usage-percentage-search'
 import { LeftSidebarAppearanceSetting } from './LeftSidebarAppearanceSetting'
+import { WorkspaceChromeAppearanceSetting } from './WorkspaceChromeAppearanceSetting'
 import {
   getLeftSidebarAppearanceEntry,
+  getWorkspaceChromeAppearanceEntry,
   getShowPinnedWorktreesInGroupsEntry,
   getWorkspaceCardLayoutEntry
 } from './appearance-sidebar-search'
@@ -77,6 +79,7 @@ export function AppearanceWindowSidebarSection({
   const visibleStatusBarToggles = useAvailableStatusBarToggles(getStatusBarToggles())
   const usagePercentageDisplayEntry = getUsagePercentageDisplayEntry()
   const leftSidebarAppearanceEntry = getLeftSidebarAppearanceEntry()
+  const workspaceChromeAppearanceEntry = getWorkspaceChromeAppearanceEntry()
   const sidebarEntries = getSidebarEntries()
   const workspaceCardLayoutEntry = getWorkspaceCardLayoutEntry()
   const layoutEntries = getLayoutEntries()
@@ -125,6 +128,15 @@ export function AppearanceWindowSidebarSection({
           forceVisible={forceVisiblePrimary}
         >
           <LeftSidebarAppearanceSetting settings={settings} updateSettings={updateSettings} />
+        </SearchableSetting>
+
+        <SearchableSetting
+          title={workspaceChromeAppearanceEntry.title}
+          description={workspaceChromeAppearanceEntry.description}
+          keywords={workspaceChromeAppearanceEntry.keywords}
+          forceVisible={forceVisiblePrimary}
+        >
+          <WorkspaceChromeAppearanceSetting settings={settings} updateSettings={updateSettings} />
         </SearchableSetting>
 
         <SearchableSetting

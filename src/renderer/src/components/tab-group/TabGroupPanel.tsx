@@ -20,6 +20,7 @@ import { getTabPaneBodyDroppableId, type HoveredTabInsertion } from './useTabDra
 import { tabGroupBodyAnchorName } from './tab-group-body-anchor'
 import { registerTabGroupBody } from './tab-group-body-geometry'
 import { translate } from '@/i18n/i18n'
+import { useWorkspaceChromeStyle } from '@/lib/use-workspace-chrome-style'
 import type { TabGroup } from '../../../../shared/tab-types'
 import type { ClientHostedBrowserRow } from '../../../../shared/client-hosted-browser-rows'
 import { useClientHostedBrowserRows } from '@/lib/pane-manager/client-hosted-browser-row-state'
@@ -74,6 +75,7 @@ export default function TabGroupPanel({
 }): React.JSX.Element {
   const rightSidebarOpen = useAppStore((state) => state.rightSidebarOpen)
   const sidebarOpen = useAppStore((state) => state.sidebarOpen)
+  const workspaceChromeStyle = useWorkspaceChromeStyle()
   const model = useTabGroupWorkspaceModel({ groupId, worktreeId })
   const {
     activeTab,
@@ -276,6 +278,7 @@ export default function TabGroupPanel({
       {tabStrip !== 'attached' ? null : (
         <div
           className="h-[32px] shrink-0 border-b border-border bg-card"
+          style={workspaceChromeStyle}
           data-tab-group-strip-id={groupId}
           data-terminal-focus-release-surface="true"
           data-worktree-id={worktreeId}

@@ -7047,6 +7047,12 @@
             "tintOpacity": "Tint Strength",
             "tintOpacityDescription": "Controls how strongly the tint is mixed into the sidebar."
           },
+          "workspaceChromeAppearance": {
+            "title": "Title & Status Bar Appearance",
+            "rowDescription": "Make the title bar, tab strip, and status bar match your terminal, or keep the app theme.",
+            "default": "Default",
+            "matchTerminal": "Match Terminal"
+          },
           "workspaceCardLayoutGuidance": "Managed from the workspace sidebar.",
           "interfaceDefaultFont": "Default font",
           "terminalDefaultFont": "Default font",
@@ -9565,6 +9571,12 @@
               "terminal": "terminal",
               "background": "background",
               "tint": "tint"
+            },
+            "workspaceChromeAppearance": {
+              "title": "Title & Status Bar Appearance",
+              "description": "Make the title bar, tab strip, and status bar match your terminal, or keep the app theme.",
+              "tabBar": "tab bar",
+              "statusBar": "status bar"
             },
             "workspaceCardLayout": {
               "title": "Workspace Card Layout",

@@ -31,6 +31,7 @@ import { ProviderSegment, UsageOverflowChip, getUsageTone } from './StatusBarPro
 import { useStatusBarController } from './use-status-bar-controller'
 import { StatusBarVisibilityMenu } from './StatusBarVisibilityMenu'
 import { isPairedWebClientWindow } from '@/lib/desktop-window-chrome'
+import { useWorkspaceChromeStyle } from '@/lib/use-workspace-chrome-style'
 
 const PetStatusSegment = lazyWithRetry(() =>
   import('./PetStatusSegment').then((module) => ({ default: module.PetStatusSegment }))
@@ -55,6 +56,7 @@ export function StatusBarSurface({
   floatingTerminalOpen
 }: StatusBarProps): React.JSX.Element | null {
   const controller = useStatusBarController(floatingTerminalOpen)
+  const workspaceChromeStyle = useWorkspaceChromeStyle()
   if (!controller) {
     return null
   }
@@ -102,6 +104,7 @@ export function StatusBarSurface({
       ref={barRef}
       // Why: one line at any width — density steps down first. overflow-clip (not hidden) so focus can't scroll the bar; the clip margin spares focus rings and badge dots.
       className="flex items-center h-6 min-h-[24px] px-3 gap-4 overflow-clip [overflow-clip-margin:3px] whitespace-nowrap border-t border-border bg-[var(--bg-titlebar,var(--card))] text-xs select-none shrink-0 relative"
+      style={workspaceChromeStyle}
       onContextMenuCapture={(event) => {
         if (!shouldOpenStatusBarContextMenu(event.target)) {
           return
