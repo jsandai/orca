@@ -82,7 +82,7 @@ const props: ComponentProps<typeof DiffSectionBody> = {
   useIntrinsicImageHeight: false,
   isBranchMode: false,
   sideBySide: true,
-  isDark: false,
+  monacoTheme: 'vs',
   language: 'markdown',
   modelPathBase: 'wrap-lifecycle',
   isEditable: false,

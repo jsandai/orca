@@ -3,14 +3,17 @@ import { act, cleanup, renderHook } from '@testing-library/react'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { resetSystemPrefersDarkSubscriptionForTests } from '@/components/terminal-pane/use-system-prefers-dark'
 
-const settingsState: { theme: 'system' | 'dark' | 'light' | undefined } = vi.hoisted(() => ({
-  theme: 'system'
-}))
+const settingsState: {
+  theme: 'system' | 'dark' | 'light' | undefined
+  extra: Record<string, unknown>
+} = vi.hoisted(() => ({ theme: 'system', extra: {} }))
 
 vi.mock('@/store', () => ({
   useAppStore: (selector: (state: Record<string, unknown>) => unknown) =>
     selector({
-      settings: settingsState.theme ? { theme: settingsState.theme } : undefined
+      settings: settingsState.theme
+        ? { theme: settingsState.theme, ...settingsState.extra }
+        : undefined
     })
 }))
 
@@ -46,6 +49,7 @@ const originalMatchMedia = window.matchMedia
 afterEach(() => {
   cleanup()
   settingsState.theme = 'system'
+  settingsState.extra = {}
   resetSystemPrefersDarkSubscriptionForTests()
   window.matchMedia = originalMatchMedia
 })
@@ -76,6 +80,17 @@ describe('useDocumentDarkTheme', () => {
     expect(result.current).toBe(expected)
     act(() => media.emit(!expected))
     expect(result.current).toBe(expected)
+  })
+
+  it('follows a light terminal background in match-terminal mode', () => {
+    settingsState.theme = 'dark'
+    settingsState.extra = {
+      workspaceChromeAppearanceMode: 'match-terminal',
+      terminalColorOverrides: { background: '#fffcf0', foreground: '#100f0f' }
+    }
+    installMatchMedia(true)
+    const { result } = renderHook(() => useDocumentDarkTheme())
+    expect(result.current).toBe(false)
   })
 
   it('treats unloaded settings as system', () => {

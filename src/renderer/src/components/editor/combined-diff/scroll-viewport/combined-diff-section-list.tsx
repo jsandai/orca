@@ -20,7 +20,7 @@ export function CombinedDiffSectionList({
   isAllMode,
   isBranchMode,
   isCommitMode,
-  isDark,
+  monacoTheme,
   loadSection,
   loadDeferredSection,
   markDirectScrollInput,
@@ -49,7 +49,7 @@ export function CombinedDiffSectionList({
   isAllMode: boolean
   isBranchMode: boolean
   isCommitMode: boolean
-  isDark: boolean
+  monacoTheme: string
   loadSection: (index: number) => void
   loadDeferredSection: (index: number) => void
   markDirectScrollInput: () => void
@@ -110,7 +110,7 @@ export function CombinedDiffSectionList({
                   index={virtualItem.index}
                   isBranchMode={isBranchMode}
                   sideBySide={sideBySide}
-                  isDark={isDark}
+                  monacoTheme={monacoTheme}
                   settings={settings}
                   sectionHeight={sectionHeights[virtualItem.index]}
                   worktreeId={file.worktreeId}

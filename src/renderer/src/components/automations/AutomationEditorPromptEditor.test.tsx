@@ -15,6 +15,9 @@ vi.mock('@monaco-editor/react', () => ({
   loader: { config: vi.fn() }
 }))
 vi.mock('@/lib/monaco-setup', () => ({ monaco: {} }))
+vi.mock('@/components/editor/use-monaco-editor-theme', () => ({
+  useMonacoEditorTheme: () => 'vs-dark'
+}))
 vi.mock('@/store', () => ({
   useAppStore: (selector: (state: Record<string, unknown>) => unknown) =>
     selector({

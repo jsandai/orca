@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSta
 import { useVirtualizer } from '@tanstack/react-virtual'
 import type { editor as monacoEditor } from 'monaco-editor'
 import { useAppStore } from '@/store'
-import { useDocumentDarkTheme } from '@/hooks/use-document-dark-theme'
+import { useMonacoEditorTheme } from '@/components/editor/use-monaco-editor-theme'
 import { DiffSectionItem } from '@/components/editor/DiffSectionItem'
 import { CombinedDiffFileTree } from '../../editor/combined-diff/browse-files/combined-diff-file-tree'
 import { useCombinedDiffSectionIndexMap } from '../../editor/combined-diff/resolve-changes/use-combined-diff-section-index-map'
@@ -46,7 +46,7 @@ export function PRFilesCombinedDiffViewer({
   onViewedChange
 }: PRFilesCombinedDiffViewerProps): React.JSX.Element {
   const settings = useAppStore((s) => s.settings)
-  const isDark = useDocumentDarkTheme()
+  const monacoTheme = useMonacoEditorTheme()
   const diffEntrySignature = useMemo(
     () =>
       JSON.stringify(
@@ -349,7 +349,7 @@ export function PRFilesCombinedDiffViewer({
                     index={virtualItem.index}
                     isBranchMode={false}
                     sideBySide={sideBySide}
-                    isDark={isDark}
+                    monacoTheme={monacoTheme}
                     settings={settings}
                     sectionHeight={sectionHeights[virtualItem.index]}
                     worktreeId={`github-pr:${repoId}:${prNumber}`}

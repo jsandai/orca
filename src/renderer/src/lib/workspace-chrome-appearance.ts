@@ -1,4 +1,5 @@
 import type { GlobalSettings } from '../../../shared/global-settings-types'
+import { buildSyntaxTokenVariables, resolveTerminalEditorPalette } from './terminal-editor-palette'
 import { isTerminalBackgroundLight } from './terminal-title-contrast'
 import {
   resolveTerminalSurfaceVariables,
@@ -41,6 +42,7 @@ export function resolveWorkspaceChromeDocumentAppearance(
     systemPrefersDark
   )
   const theme = isTerminalBackgroundLight(vars['--background']) ? 'light' : 'dark'
+  const editorPalette = resolveTerminalEditorPalette(settings, systemPrefersDark)
   return {
     variables: {
       ...vars,
@@ -49,7 +51,10 @@ export function resolveWorkspaceChromeDocumentAppearance(
       '--popover': vars['--card'],
       '--popover-foreground': vars['--foreground'],
       // Why: the sidebar's 9% accent vanishes on a lifted popover; match the menu hover (white/14, black/8).
-      '--accent': `color-mix(in srgb, ${vars['--foreground']} ${theme === 'dark' ? 14 : 8}%, ${vars['--background']})`
+      '--accent': `color-mix(in srgb, ${vars['--foreground']} ${theme === 'dark' ? 14 : 8}%, ${vars['--background']})`,
+      // Why: markdown, rich editor, and notebook panes paint --editor-surface; Monaco follows via its own theme.
+      '--editor-surface': vars['--background'],
+      ...(editorPalette ? buildSyntaxTokenVariables(editorPalette) : {})
     },
     // Why: status, badge, and diff colors are tuned per mode; pick the one that suits the terminal background.
     theme

@@ -82,6 +82,7 @@ vi.mock('./useDiffViewerFirstChangeAutoScroll', () => ({
   useDiffViewerFirstChangeAutoScroll: vi.fn()
 }))
 vi.mock('@/hooks/use-document-dark-theme', () => ({ useDocumentDarkTheme: () => false }))
+vi.mock('./use-monaco-editor-theme', () => ({ useMonacoEditorTheme: () => 'vs' }))
 vi.mock('./diff-editor-line-number-options', () => ({
   applyDiffEditorLineNumberOptions: () => ({ dispose: vi.fn() })
 }))
