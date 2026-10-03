@@ -192,7 +192,9 @@ export function detectShebangLanguage(content: string): string | null {
     interpreter = target.slice(target.lastIndexOf('/') + 1)
   }
   const base = interpreter.replace(/[\d.]+$/, '')
-  return SHEBANG_INTERPRETER_TO_LANGUAGE[base] ?? null
+  return Object.hasOwn(SHEBANG_INTERPRETER_TO_LANGUAGE, base)
+    ? SHEBANG_INTERPRETER_TO_LANGUAGE[base]
+    : null
 }
 
 export function detectLanguage(filePath: string, content?: string): string {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { detectLanguage } from './language-detect'
+import { detectLanguage, detectShebangLanguage } from './language-detect'
 
 describe('detectLanguage', () => {
   it('maps .vue files to the custom vue language id', () => {
@@ -238,6 +238,14 @@ describe('detectLanguage', () => {
     it('returns plaintext for unknown interpreters', () => {
       expect(detectLanguage('bin/tool', '#!/usr/bin/env awk')).toBe('plaintext')
     })
+
+    it.each(['toString', 'constructor', '__proto__', 'hasOwnProperty'])(
+      'ignores inherited object keys like %s',
+      (name) => {
+        expect(detectShebangLanguage(`#!/usr/bin/env ${name}`)).toBeNull()
+        expect(detectLanguage('bin/tool', `#!/usr/bin/${name}`)).toBe('plaintext')
+      }
+    )
 
     it('returns plaintext when there is no shebang', () => {
       expect(detectLanguage('bin/tool', 'echo hi\n')).toBe('plaintext')
