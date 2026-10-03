@@ -171,6 +171,14 @@ describe('buildMonacoThemeData', () => {
     expect(buildMonacoThemeData(palette).base).toBe('vs-dark')
   })
 
+  it('colors bracket pairs from the terminal palette', () => {
+    const palette = resolveTerminalEditorPalette(matchTerminalSettings(), true)!
+    const { colors } = buildMonacoThemeData(palette)
+    expect(colors['editorBracketHighlight.foreground1']).toBe(palette.syntax.type)
+    expect(colors['editorBracketHighlight.foreground2']).toBe(palette.syntax.keyword)
+    expect(colors['editorBracketHighlight.foreground3']).toBe(palette.syntax.function)
+  })
+
   it('only emits hex colors, which is all Monaco accepts', () => {
     const palette = resolveTerminalEditorPalette(matchTerminalSettings(), true)!
     const theme = buildMonacoThemeData(palette)

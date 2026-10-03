@@ -205,6 +205,10 @@ export function buildMonacoThemeData(
       'editorIndentGuide.activeBackground1': mix(25),
       'editorBracketMatch.background': mix(15),
       'editorBracketMatch.border': mix(30),
+      // Why: Monaco's stock pair colors (gold, orchid, blue) clash with muted palettes; same hue order from ANSI.
+      'editorBracketHighlight.foreground1': syntax.type,
+      'editorBracketHighlight.foreground2': syntax.keyword,
+      'editorBracketHighlight.foreground3': syntax.function,
       'editorWidget.background': mix(5),
       'editorWidget.border': mix(12),
       'editorSuggestWidget.background': mix(5),
