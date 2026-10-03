@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useAppStore } from '@/store'
 import { useSystemPrefersDark } from '@/components/terminal-pane/use-system-prefers-dark'
 import { resolveWorkspaceChromeDocumentAppearance } from '@/lib/workspace-chrome-appearance'
@@ -5,14 +6,16 @@ import { resolveWorkspaceChromeDocumentAppearance } from '@/lib/workspace-chrome
 /** Resolved document theme that re-renders when a `system` theme flips with the OS. */
 export function useDocumentDarkTheme(): boolean {
   const systemPrefersDark = useSystemPrefersDark()
+  const settings = useAppStore((s) => s.settings)
   // Why: match-terminal picks light/dark from the terminal background; editors and previews must agree.
-  // Selecting a string keeps unrelated settings writes from re-rendering every editor.
-  const matched = useAppStore(
-    (s) => resolveWorkspaceChromeDocumentAppearance(s.settings, systemPrefersDark)?.theme
+  // Resolved in a memo, not the store selector, which reruns on every store update.
+  const matched = useMemo(
+    () => resolveWorkspaceChromeDocumentAppearance(settings, systemPrefersDark)?.theme,
+    [settings, systemPrefersDark]
   )
-  const theme = useAppStore((s) => s.settings?.theme ?? 'system')
   if (matched) {
     return matched === 'dark'
   }
+  const theme = settings?.theme ?? 'system'
   return theme === 'system' ? systemPrefersDark : theme === 'dark'
 }
