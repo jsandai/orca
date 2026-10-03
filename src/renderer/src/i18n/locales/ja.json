@@ -6807,6 +6807,12 @@
             "tintOpacity": "色合いの強さ",
             "tintOpacityDescription": "サイドバーに色合いをどの程度強く混ぜるかを調整します。"
           },
+          "workspaceChromeAppearance": {
+            "title": "インターフェースの外観",
+            "rowDescription": "Orca のインターフェース全体をターミナルのテーマに合わせるか、アプリのテーマのままにします。",
+            "default": "デフォルト",
+            "matchTerminal": "ターミナルに合わせる"
+          },
           "workspaceCardLayoutGuidance": "ワークスペースサイドバーで管理されます。",
           "872af9556e": "システムトレイ",
           "2edf606c46": "閉じるときにトレイへ最小化",
@@ -9310,6 +9316,12 @@
               "terminal": "ターミナル",
               "background": "背景",
               "tint": "色合い"
+            },
+            "workspaceChromeAppearance": {
+              "title": "インターフェースの外観",
+              "description": "Orca のインターフェース全体をターミナルのテーマに合わせるか、アプリのテーマのままにします。",
+              "tabBar": "タブバー",
+              "statusBar": "ステータスバー"
             },
             "workspaceCardLayout": {
               "title": "ワークスペースカードのレイアウト",

@@ -6822,6 +6822,12 @@
             "tintOpacity": "Intensidad del tinte",
             "tintOpacityDescription": "Controla con qué fuerza se mezcla el tinte en la barra lateral."
           },
+          "workspaceChromeAppearance": {
+            "title": "Apariencia de la interfaz",
+            "rowDescription": "Haz que toda la interfaz de Orca coincida con el tema de tu terminal o conserva el tema de la aplicación.",
+            "default": "Predeterminado",
+            "matchTerminal": "Coincidir con el terminal"
+          },
           "workspaceCardLayoutGuidance": "Gestionado desde la barra lateral del espacio de trabajo.",
           "872af9556e": "Bandeja del sistema",
           "2edf606c46": "Minimizar a la bandeja al cerrar",
@@ -9288,6 +9294,12 @@
               "terminal": "Terminal",
               "background": "fondo",
               "tint": "tinte"
+            },
+            "workspaceChromeAppearance": {
+              "title": "Apariencia de la interfaz",
+              "description": "Haz que toda la interfaz de Orca coincida con el tema de tu terminal o conserva el tema de la aplicación.",
+              "tabBar": "barra de pestañas",
+              "statusBar": "barra de estado"
             },
             "workspaceCardLayout": {
               "title": "Diseño de tarjetas de espacios de trabajo",

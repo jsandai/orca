@@ -6930,6 +6930,12 @@
             "tintOpacity": "Intensité de la teinte",
             "tintOpacityDescription": "Contrôle l'intensité avec laquelle la teinte est mélangée à la barre latérale."
           },
+          "workspaceChromeAppearance": {
+            "title": "Apparence de l'interface",
+            "rowDescription": "Accordez toute l'interface d'Orca au thème de votre terminal, ou gardez le thème de l'application.",
+            "default": "Par défaut",
+            "matchTerminal": "Comme le terminal"
+          },
           "workspaceCardLayoutGuidance": "Géré depuis la barre latérale des espaces de travail.",
           "interfaceDefaultFont": "Police par défaut",
           "terminalDefaultFont": "Police par défaut",
@@ -9437,6 +9443,12 @@
               "terminal": "Terminal",
               "background": "arrière-plan",
               "tint": "teinte"
+            },
+            "workspaceChromeAppearance": {
+              "title": "Apparence de l'interface",
+              "description": "Accordez toute l'interface d'Orca au thème de votre terminal, ou gardez le thème de l'application.",
+              "tabBar": "barre d'onglets",
+              "statusBar": "barre d'état"
             },
             "workspaceCardLayout": {
               "title": "Disposition des cartes d'espace de travail",

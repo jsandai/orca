@@ -6810,6 +6810,12 @@
             "tintOpacity": "색조 강도",
             "tintOpacityDescription": "사이드바에 색조를 얼마나 강하게 섞을지 조절합니다."
           },
+          "workspaceChromeAppearance": {
+            "title": "인터페이스 모양",
+            "rowDescription": "Orca 인터페이스 전체를 terminal 테마에 맞추거나 앱 테마를 유지합니다.",
+            "default": "기본값",
+            "matchTerminal": "Terminal에 맞춤"
+          },
           "workspaceCardLayoutGuidance": "워크스페이스 사이드바에서 관리됩니다.",
           "interfaceDefaultFont": "기본 글꼴",
           "terminalDefaultFont": "기본 글꼴",
@@ -9273,6 +9279,12 @@
               "terminal": "터미널",
               "background": "배경",
               "tint": "색조"
+            },
+            "workspaceChromeAppearance": {
+              "title": "인터페이스 모양",
+              "description": "Orca 인터페이스 전체를 terminal 테마에 맞추거나 앱 테마를 유지합니다.",
+              "tabBar": "탭 표시줄",
+              "statusBar": "상태 표시줄"
             },
             "9a115966d3": "닫을 때 트레이로 최소화",
             "4d5b9427b5": "활성화하면 창을 닫아도 Orca가 종료되지 않고 시스템 트레이에서 계속 실행됩니다.",
