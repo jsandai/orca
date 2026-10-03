@@ -40,15 +40,18 @@ export function resolveWorkspaceChromeDocumentAppearance(
     { ...settings, terminalBackgroundOpacity: undefined },
     systemPrefersDark
   )
+  const theme = isTerminalBackgroundLight(vars['--background']) ? 'light' : 'dark'
   return {
     variables: {
       ...vars,
       '--bg-titlebar': vars['--background'],
       // Why: popovers keep the card lift so they stay distinct from the surface behind them.
       '--popover': vars['--card'],
-      '--popover-foreground': vars['--foreground']
+      '--popover-foreground': vars['--foreground'],
+      // Why: the sidebar's 9% accent vanishes on a lifted popover; match the menu hover (white/14, black/8).
+      '--accent': `color-mix(in srgb, ${vars['--foreground']} ${theme === 'dark' ? 14 : 8}%, ${vars['--background']})`
     },
     // Why: status, badge, and diff colors are tuned per mode; pick the one that suits the terminal background.
-    theme: isTerminalBackgroundLight(vars['--background']) ? 'light' : 'dark'
+    theme
   }
 }

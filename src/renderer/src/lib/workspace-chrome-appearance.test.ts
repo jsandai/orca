@@ -64,6 +64,8 @@ describe('resolveWorkspaceChromeDocumentAppearance', () => {
     expect(appearance?.variables['--background']).toBe('#000000')
     expect(appearance?.variables['--popover']).toBe(appearance?.variables['--card'])
     expect(appearance?.variables['--popover']).toContain('#ff7edb 4%')
+    // Hover must clear the popover lift, as Orca's own menu hover does.
+    expect(appearance?.variables['--accent']).toContain('#ff7edb 14%')
     expect(appearance?.theme).toBe('dark')
   })
 
@@ -78,5 +80,6 @@ describe('resolveWorkspaceChromeDocumentAppearance', () => {
     )
 
     expect(appearance?.theme).toBe('light')
+    expect(appearance?.variables['--accent']).toContain(' 8%')
   })
 })
