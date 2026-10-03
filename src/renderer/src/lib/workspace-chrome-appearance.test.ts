@@ -66,6 +66,8 @@ describe('resolveWorkspaceChromeDocumentAppearance', () => {
     expect(appearance?.variables['--popover']).toContain('#ff7edb 4%')
     // Hover must clear the popover lift, as Orca's own menu hover does.
     expect(appearance?.variables['--accent']).toContain('#ff7edb 14%')
+    expect(appearance?.variables['--input']).toContain('#ff7edb 12%')
+    expect(appearance?.variables['--ring']).toContain('#ff7edb 44%')
     expect(appearance?.theme).toBe('dark')
   })
 

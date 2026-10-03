@@ -42,6 +42,8 @@ export function resolveWorkspaceChromeDocumentAppearance(
     systemPrefersDark
   )
   const theme = isTerminalBackgroundLight(vars['--background']) ? 'light' : 'dark'
+  const fg = vars['--foreground']
+  const bg = vars['--background']
   const editorPalette = resolveTerminalEditorPalette(settings, systemPrefersDark)
   return {
     variables: {
@@ -51,7 +53,12 @@ export function resolveWorkspaceChromeDocumentAppearance(
       '--popover': vars['--card'],
       '--popover-foreground': vars['--foreground'],
       // Why: the sidebar's 9% accent vanishes on a lifted popover; match the menu hover (white/14, black/8).
-      '--accent': `color-mix(in srgb, ${vars['--foreground']} ${theme === 'dark' ? 14 : 8}%, ${vars['--background']})`,
+      '--accent': `color-mix(in srgb, ${fg} ${theme === 'dark' ? 14 : 8}%, ${bg})`,
+      // Why: secondary buttons, inputs, and focus rings otherwise keep the app theme's greys on the terminal surface.
+      '--secondary': `color-mix(in srgb, ${fg} 7%, ${bg})`,
+      '--secondary-foreground': fg,
+      '--input': `color-mix(in srgb, ${fg} 12%, ${bg})`,
+      '--ring': `color-mix(in srgb, ${fg} 44%, ${bg})`,
       // Why: markdown, rich editor, and notebook panes paint --editor-surface; Monaco follows via its own theme.
       '--editor-surface': vars['--background'],
       ...(editorPalette ? buildSyntaxTokenVariables(editorPalette) : {})
