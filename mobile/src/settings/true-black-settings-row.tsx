@@ -51,6 +51,7 @@ export function TrueBlackSettingsRow() {
         </View>
         <Switch
           value={enabled}
+          accessibilityLabel="True black"
           onValueChange={(value) => {
             setEnabled(value)
             saveTrueBlackPreference(value)
