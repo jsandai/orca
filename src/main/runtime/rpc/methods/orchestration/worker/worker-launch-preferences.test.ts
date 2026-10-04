@@ -117,6 +117,34 @@ describe('orchestration worker launch preferences', () => {
     ).toThrow('does not support effort turbo')
   })
 
+  it('does not invent a Pi thinking level when only a model is requested', () => {
+    expect(
+      resolveWorkerLaunchPreferences({ agent: 'pi', model: 'google/gemini-3-pro' }).preferences
+    ).toEqual({ model: 'google/gemini-3-pro' })
+  })
+
+  it('passes an opaque Pi model and thinking level through the shared catalog', () => {
+    expect(
+      resolveWorkerLaunchPreferences({ agent: 'pi', model: 'google/gemini-3-pro', effort: 'xhigh' })
+    ).toEqual({
+      preferences: { model: 'google/gemini-3-pro', effort: 'xhigh' },
+      receipt: {
+        requested: { agent: 'pi', model: 'google/gemini-3-pro', effort: 'xhigh' },
+        effective: { agent: 'pi', model: 'google/gemini-3-pro', effort: 'xhigh' }
+      }
+    })
+  })
+
+  it('rejects an unsupported Pi thinking level', () => {
+    expect(() =>
+      resolveWorkerLaunchPreferences({
+        agent: 'pi',
+        model: 'google/gemini-3-pro',
+        effort: 'future-effort'
+      })
+    ).toThrow('does not support effort future-effort')
+  })
+
   it('refuses an opencode model because the opencode 2 TUI rejects --model', () => {
     expect(() =>
       resolveWorkerLaunchPreferences({ agent: 'opencode', model: 'meta/muse-spark-1.3' })
