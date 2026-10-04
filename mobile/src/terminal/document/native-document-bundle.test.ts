@@ -314,7 +314,8 @@ describe('the bundled native document', () => {
     // 50 before true black: `laid-out-cell-box` reads the cell box xterm laid out, for web-ready and each render;
     // `terminal-grid-fit` is the one fit of that box and `terminal-cell-box` its one comparison,
     // both shared with the app. 51: `true-black-state`, the import-free startup palette choice
-    // that `mobile-theme` reads for the terminal fallback background.
+    // that `mobile-theme` reads; here it comes from the page's `__orcaTrueBlack` start value, so
+    // the terminal's fallback background matches the app's palette.
     expect(inputs).toHaveLength(51)
     expect(script).not.toContain('__commonJS')
     // `__esm` wrappers are esbuild's answer to a cycle, and a cycle would make a module's top level
