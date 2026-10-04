@@ -55,8 +55,8 @@ const defaultColors = {
 export const trueBlackColors = {
   ...defaultColors,
   bgBase: '#000000',
-  bgPanel: '#0a0a0a',
-  bgRaised: '#1a1a1a',
+  bgPanel: '#000000',
+  bgRaised: '#141414',
   borderSubtle: '#1f1f1f',
   editorSurface: '#000000',
   terminalBg: '#000000'
