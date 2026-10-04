@@ -21,14 +21,18 @@ when an older CLI rejects the flag. A nested worker must respect
 
 ## Launch preferences
 
-For a fresh Claude, Codex, Cursor, Antigravity, or Muse terminal, `--model`
-accepts an opaque provider model ID. Pass it only when the user named a model;
+For a fresh Claude, Codex, Cursor, Antigravity, Muse, or Pi terminal, `--model`
+accepts an opaque provider model ID; for Pi it is `provider/id` and `--effort`
+maps to Pi's `--thinking`. Pi clamps thinking to what the model supports, so a
+non-thinking model runs with thinking off even though the receipt echoes the
+requested effort. Pass it only when the user named a model;
 otherwise omit it so the worker inherits the user's configured agent default.
 Add `--effort` only when that model supports it:
 
 ```text
 ORCA orchestration worker-start --task <task_id> --worktree current --agent claude --model opus --effort high --json
 ORCA orchestration worker-start --task <task_id> --worktree current --agent muse --model muse-spark-1.3 --json
+ORCA orchestration worker-start --task <task_id> --worktree current --agent pi --model google/gemini-3-pro --effort high --json
 ```
 
 Other agents, including `opencode`, reject `--model`; they run the model set in
